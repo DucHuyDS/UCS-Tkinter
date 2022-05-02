@@ -1,5 +1,5 @@
-
 from tkinter import *
+from tkinter.messagebox import showinfo
 from UCS import generateDirectedGraph,UCS_code
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -9,30 +9,43 @@ def djkstra():
     lsb_dijkstra.delete(0)
     length1_dijkstra.delete(0)
     directed_weighted_graph=generateDirectedGraph(weighted_edges)
-    ucs =UCS_code(directed_weighted_graph,input1_dj.get(), input2_dj.get())
-    lsb_dijkstra.insert(0,ucs[0])
-    length1_dijkstra.insert(0,ucs[1])
-    s1=ucs[0].split('-')
-    list_dj=[]
-    for i in range(len(s1)):
-        try:
-            list_dj.append([s1[i],s1[i+1]])
-            list_dj.append([s1[i+1],s1[i]])
-        except:
-            pass
-    for i in list_dj:
-        elarge = [(u, v) for (u, v, d) in G.edges(data=True) if u==i[0] and v==i[1]]
-        esmall = [(u, v) for (u, v, d) in G.edges(data=True) if u!=i[0] and v!=i[1]]
-        pos = nx.spring_layout(G, seed=7) 
-        nx.draw_networkx_nodes(G, pos, node_size=700)
-        nx.draw_networkx_edges(G, pos, edgelist=esmall, width=1)
-        nx.draw_networkx_edges(
-        G, pos, edgelist=elarge, width=4, edge_color="r"
-        )
-        nx.draw(G, pos)
-        nx.draw_networkx_edge_labels(G, pos)
-        nx.draw_networkx_labels(G, pos, font_size=20, font_family="sans-serif")
-    plt.show()
+    Bool_ip1 = False
+    Bool_ip2 = False
+    for i in weighted_edges:
+        if input1_dj.get() in i:
+            Bool_ip1 = True
+        if input2_dj.get() in i:
+            Bool_ip2 = True
+    if Bool_ip1 ==True and Bool_ip2 == True:
+        ucs =UCS_code(directed_weighted_graph,input1_dj.get(), input2_dj.get())
+        lsb_dijkstra.insert(0,ucs[0])
+        length1_dijkstra.insert(0,ucs[1])
+        s1=ucs[0].split('-')
+        print(s1)
+        list_dj=[]
+        if input1_dj.get()!=input2_dj.get():
+            for i in range(len(s1)):
+                try:
+                    list_dj.append([s1[i],s1[i+1]])
+                    list_dj.append([s1[i+1],s1[i]])
+                except:
+                    pass
+            for i in list_dj:
+                elarge = [(u, v) for (u, v, d) in G.edges(data=True) if u==i[0] and v==i[1]]
+                esmall = [(u, v) for (u, v, d) in G.edges(data=True) if u!=i[0] and v!=i[1]]
+                pos = nx.spring_layout(G, seed=7) 
+                nx.draw_networkx_nodes(G, pos, node_size=700)
+                nx.draw_networkx_edges(G, pos, edgelist=esmall, width=1)
+                nx.draw_networkx_edges(
+                G, pos, edgelist=elarge, width=4, edge_color="r"
+                )
+                nx.draw(G, pos)
+                nx.draw_networkx_edge_labels(G, pos)
+                nx.draw_networkx_labels(G, pos, font_size=20, font_family="sans-serif")
+            plt.show()
+    else:
+        showinfo('Lỗi','Không tìm thấy đường đi!')
+        draw_edge()
 def delete(event):
     global lsb,i
     possition_list=lsb.curselection()
@@ -43,7 +56,7 @@ def delete(event):
         if edges[0]==list_position[0] and edges[1]==list_position[1] and edges[2]==list_position[2] or edges[0]==list_position[1] and edges[1]==list_position[0] and edges[2]==list_position[2]: 
              weighted_edges.remove(edges)
     i-=1
-    plot()
+    draw_edge()
     lsb_dijkstra.delete(0)
     length1_dijkstra.delete(0)
 def start():
@@ -55,8 +68,8 @@ def start():
     label1_input.delete(0,END)
     label2_input.delete(0,END)
     label3_input.delete(0,END)
-    plot()
-def plot():
+    draw_edge()
+def draw_edge():
     plt.clf()
     pos = nx.spring_layout(G, seed=7) 
     nx.draw_networkx_nodes(G, pos, node_size=700)
@@ -111,7 +124,7 @@ plot_button = Button(master = window,
                      command = start,
                      height = 2, 
                      width = 10,
-                     text = "Start")
+                     text = "Hiển thị")
 plot_button.place(x=200,y=130)
 
 global i,lsb
