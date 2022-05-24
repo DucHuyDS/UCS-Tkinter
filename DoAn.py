@@ -76,7 +76,6 @@ def start():
     pos = nx.spring_layout(G ,seed=7)
     draw_edge(pos)
 def draw_edge(pos,elarge=None):
-    # vlist.clear()
     lsb_nodes.delete(0,END)
     if elarge==None:
         plt.clf()
