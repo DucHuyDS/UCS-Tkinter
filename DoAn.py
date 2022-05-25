@@ -121,7 +121,7 @@ def check_edge():
         pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
     return pos 
 
-def month_changed(event):
+def get_combo(event):
     global get_node,get_score
     get_node=''
     get_score=''
@@ -207,7 +207,7 @@ selected_node = StringVar()
 Combo = ttk.Combobox(window, textvariable=selected_node,width=5,height=1)
 Combo['state'] = 'readonly'
 Combo.place(x=50,y=220)
-Combo.bind('<<ComboboxSelected>>', month_changed)
+Combo.bind('<<ComboboxSelected>>', get_combo)
 
 selected_score=StringVar()
 Combo_score = ttk.Combobox(window, textvariable=selected_score,width=5,height=1)
@@ -215,7 +215,7 @@ Combo_score['values'] = [0.001,0.01,0.1]
 Combo_score['state'] = 'readonly'
 Combo_score.set('chọn')
 Combo_score.place(x=50,y=270)
-Combo_score.bind('<<ComboboxSelected>>', month_changed)
+Combo_score.bind('<<ComboboxSelected>>', get_combo)
 bt_increse_x=Button(window,text='>',height=1,command= lambda: change_position_node('+x'))
 bt_increse_x.place(x=85,y=265)
 bt_decrease_x=Button(window,text='<',height=1,command= lambda: change_position_node('-x'))
