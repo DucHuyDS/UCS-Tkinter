@@ -12,7 +12,7 @@ def start():
     fixed_positions.clear()
     weighted_edges.append([input1.get(),input2.get(),float(input3.get())])
     G.add_edge(input1.get(),input2.get(),km=float(input3.get()))
-    lsb.insert(END,weighted_edges[i][0]+' đến '+weighted_edges[i][1]+' là '+ str(weighted_edges[i][2])+' km')
+    lsb.insert(END,weighted_edges[i][0]+' đến '+weighted_edges[i][1]+' : '+ str(weighted_edges[i][2])+' km')
     i+=1
     label1_input.delete(0,END)
     label2_input.delete(0,END)
