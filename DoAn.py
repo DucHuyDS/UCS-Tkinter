@@ -129,7 +129,7 @@ def get_combo(event):
     get_score=selected_score.get()
 
 def change_position_node(item):
-
+    print(fixed_positions)
     pos=check_edge()
     G_nodes=G.nodes#lay cac nut
     G.clear()
@@ -154,7 +154,6 @@ window.title('Tìm đường đi ngắn nhất')
 window.geometry("500x600+900+100")
 plt.rcParams["figure.figsize"] = (8,6)
 #---------------------
-global i             #
 i=0                  #
 weighted_edges=[]    #
 fixed_positions={}   #
@@ -206,6 +205,7 @@ change_position.place(x=30,y=180)
 selected_node = StringVar()
 Combo = ttk.Combobox(window, textvariable=selected_node,width=5,height=1)
 Combo['state'] = 'readonly'
+Combo.set('Điểm')
 Combo.place(x=50,y=220)
 Combo.bind('<<ComboboxSelected>>', get_combo)
 
@@ -213,7 +213,7 @@ selected_score=StringVar()
 Combo_score = ttk.Combobox(window, textvariable=selected_score,width=5,height=1)
 Combo_score['values'] = [0.001,0.01,0.1]
 Combo_score['state'] = 'readonly'
-Combo_score.set('chọn')
+Combo_score.set('Chọn')
 Combo_score.place(x=50,y=270)
 Combo_score.bind('<<ComboboxSelected>>', get_combo)
 bt_increse_x=Button(window,text='>',height=1,command= lambda: change_position_node('+x'))
