@@ -4,7 +4,48 @@ from tkinter.messagebox import showinfo
 from UCS import generateDirectedGraph,UCS_code
 import networkx as nx
 import matplotlib.pyplot as plt
+from sample import node_position,edges
 
+
+def start():
+    global i
+    fixed_positions.clear()
+    weighted_edges.append([input1.get(),input2.get(),float(input3.get())])
+    G.add_edge(input1.get(),input2.get(),km=float(input3.get()))
+    lsb.insert(END,weighted_edges[i][0]+' đến '+weighted_edges[i][1]+' là '+ str(weighted_edges[i][2])+' km')
+    i+=1
+    label1_input.delete(0,END)
+    label2_input.delete(0,END)
+    label3_input.delete(0,END)
+    pos = nx.spring_layout(G ,seed=7)
+    draw_edge(pos)
+
+
+def delete(event):
+    global i
+    #lay vi tri cac diem
+    # fixed_positions.clear()
+    pos=check_edge()
+    possition_list=lsb.curselection()
+    lsb.delete(int(possition_list[0]))
+    G.remove_edge(weighted_edges[int(possition_list[0])][0],weighted_edges[int(possition_list[0])][1])
+    list_position=weighted_edges[int(possition_list[0])]
+    for edges in weighted_edges:
+        if edges[0]==list_position[0] and edges[1]==list_position[1] and edges[2]==list_position[2] or edges[0]==list_position[1] and edges[1]==list_position[0] and edges[2]==list_position[2]: 
+             weighted_edges.remove(edges)
+    i-=1
+
+    G_nodes=G.nodes#lay cac nut
+    G.clear()
+    for edge in weighted_edges:
+        G.add_edge(edge[0],edge[1],km=edge[2])
+    for j in G_nodes:
+        fixed_positions[j]=list(pos[j])#dict 'nut' : vitri
+    fixed_nodes = fixed_positions.keys()
+    pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
+    draw_edge(pos)
+    lsb_dijkstra.delete(0)
+    length1_dijkstra.delete(0)
 
 def UCS_AI():
     plt.clf()
@@ -38,61 +79,8 @@ def UCS_AI():
     else:
         showinfo('Lỗi','Không tìm thấy đường đi!')
         draw_edge(check_edge())
-def delete(event):
-    global i
-    #lay vi tri cac diem
-    # fixed_positions.clear()
-    pos=check_edge()
-    possition_list=lsb.curselection()
-    lsb.delete(int(possition_list[0]))
-    G.remove_edge(weighted_edges[int(possition_list[0])][0],weighted_edges[int(possition_list[0])][1])
-    list_position=weighted_edges[int(possition_list[0])]
-    for edges in weighted_edges:
-        if edges[0]==list_position[0] and edges[1]==list_position[1] and edges[2]==list_position[2] or edges[0]==list_position[1] and edges[1]==list_position[0] and edges[2]==list_position[2]: 
-             weighted_edges.remove(edges)
-    i-=1
 
-    G_nodes=G.nodes#lay cac nut
-    G.clear()
-    for edge in weighted_edges:
-        G.add_edge(edge[0],edge[1],km=edge[2])
-    for j in G_nodes:
-        fixed_positions[j]=list(pos[j])#dict 'nut' : vitri
-    fixed_nodes = fixed_positions.keys()
-    pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
-    draw_edge(pos)
-    lsb_dijkstra.delete(0)
-    length1_dijkstra.delete(0)
-def start():
-    global i
-    fixed_positions.clear()
-    weighted_edges.append([input1.get(),input2.get(),float(input3.get())])
-    G.add_edge(input1.get(),input2.get(),km=float(input3.get()))
-    lsb.insert(END,weighted_edges[i][0]+' đến '+weighted_edges[i][1]+' là '+ str(weighted_edges[i][2])+' km')
-    i+=1
-    label1_input.delete(0,END)
-    label2_input.delete(0,END)
-    label3_input.delete(0,END)
-    pos = nx.spring_layout(G ,seed=7)
-    draw_edge(pos)
-def draw_edge(pos,elarge=None):
-    lsb_nodes.delete(0,END)
-    if elarge==None:
-        plt.clf()
-    nx.draw_networkx_nodes(G, pos, node_size=700)
-    nx.draw_networkx_edges(G, pos,width=1)
-    if elarge:
-        nx.draw_networkx_edges(
-        G, pos, edgelist=elarge, width=4, edge_color="r"
-        )
-    nx.draw(G, pos)
-    nx.draw_networkx_edge_labels(G, pos)
-    nx.draw_networkx_labels(G, pos, font_size=20, font_family="sans-serif")
-    G_nodes=G.nodes
-    Combo['values'] = [m for m in G_nodes] #cac gia tri trong combobox
-    for j in G_nodes:
-        lsb_nodes.insert(END,j)
-    plt.show()
+
 def request():
     global i
     plt.clf()
@@ -110,8 +98,27 @@ def request():
     Combo['values'] =''
     Combo.set('')
     lsb_nodes.delete(0,END)
+    plt.show(block=False)
 
-    plt.show()
+def draw_edge(pos,elarge=None):
+    lsb_nodes.delete(0,END)
+    if elarge==None:
+        plt.clf()
+    nx.draw_networkx_nodes(G, pos, node_size=700)
+    nx.draw_networkx_edges(G, pos,width=1)
+    if elarge:
+        nx.draw_networkx_edges(
+        G, pos, edgelist=elarge, width=4, edge_color="r"
+        )
+    edge_labs = dict([( (u,v), d['km']) for u,v,d in G.edges(data=True)])
+    nx.draw(G, pos)
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labs)
+    nx.draw_networkx_labels(G, pos, font_size=20, font_family="sans-serif")
+    G_nodes=G.nodes
+    Combo['values'] = [m for m in G_nodes] #cac gia tri trong combobox
+    for j in G_nodes:
+        lsb_nodes.insert(END,j)
+    plt.show(block=False)
 
 def check_edge():
     if not fixed_positions:
@@ -128,8 +135,9 @@ def get_combo(event):
     get_node=selected_node.get()
     get_score=selected_score.get()
 
+
+
 def change_position_node(item):
-    print(fixed_positions)
     pos=check_edge()
     G_nodes=G.nodes#lay cac nut
     G.clear()
@@ -148,6 +156,21 @@ def change_position_node(item):
         fixed_positions[get_node][1]=fixed_positions[get_node][1]-float(get_score) 
     pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
     draw_edge(pos)
+
+
+def sample():
+    for edge in edges:
+        input1.set(edge[0])
+        input2.set(edge[1])
+        input3.set(edge[2])
+        start()
+    for j in node_position:
+        fixed_positions[j]=list(node_position[j])#dict 'nut' : vitri
+    fixed_nodes = fixed_positions.keys()
+    pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
+    draw_edge(pos)
+
+
 #---------------------------------Tkinter------------------------------------------------------------------------
 window = Tk()
 window.title('Tìm đường đi ngắn nhất')
@@ -203,7 +226,7 @@ change_position=Label(window,text='Thay đổi vị trí')
 change_position.place(x=30,y=180)
 
 selected_node = StringVar()
-Combo = ttk.Combobox(window, textvariable=selected_node,width=5,height=1)
+Combo = ttk.Combobox(window, textvariable=selected_node,width=5,height=5)
 Combo['state'] = 'readonly'
 Combo.set('Điểm')
 Combo.place(x=50,y=220)
@@ -261,4 +284,12 @@ btn_request = Button(master = window,
                      width = 10,
                      text = "Làm mới")
 btn_request.place(x=200,y=480)
+
+sample_request = Button(master = window,  
+                    command=sample,                
+                     height = 2, 
+                     width = 10,
+                     text = "ví dụ")
+sample_request.place(x=200,y=540)
+
 window.mainloop()
