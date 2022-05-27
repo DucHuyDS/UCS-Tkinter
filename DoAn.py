@@ -42,14 +42,14 @@ def delete(event):
     for j in G_nodes:
         fixed_positions[j]=list(pos[j])#dict 'nut' : vitri
     draw_edge(check_edge())
-    lsb_dijkstra.delete(0)
-    length1_dijkstra.delete(0)
+    lsb_ucs.delete(0)
+    length1_ucs.delete(0)
 
 
 def UCS_AI():
     plt.clf()
-    lsb_dijkstra.delete(0)
-    length1_dijkstra.delete(0)
+    lsb_ucs.delete(0)
+    length1_ucs.delete(0)
     directed_weighted_graph=generateDirectedGraph(weighted_edges)
     Bool_ip1 = False
     Bool_ip2 = False
@@ -60,8 +60,8 @@ def UCS_AI():
             Bool_ip2 = True
     if Bool_ip1 ==True and Bool_ip2 == True:
         ucs =UCS_code(directed_weighted_graph,input1_dj.get(), input2_dj.get())
-        lsb_dijkstra.insert(0,ucs[0])
-        length1_dijkstra.insert(0,ucs[1])
+        lsb_ucs.insert(0,ucs[0])
+        length1_ucs.insert(0,ucs[1])
         s1=ucs[0].split('-')
         list_dj=[]
         if input1_dj.get()!=input2_dj.get():
@@ -91,8 +91,8 @@ def request():
     G.clear()
     weighted_edges.clear()
     i=0
-    lsb_dijkstra.delete(0)
-    length1_dijkstra.delete(0)
+    lsb_ucs.delete(0)
+    length1_ucs.delete(0)
     lsb.delete(0,END)
     label1_input.delete(0,END)
     label2_input.delete(0,END)
@@ -172,7 +172,7 @@ def check_edge():
         fixed_nodes = fixed_positions.keys()
         pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
     return pos 
-    
+
 
 #---------------------------------Tkinter------------------------------------------------------------------------
 window = Tk()
@@ -272,14 +272,14 @@ label2_dijkstra_input.place(x=220,y=430)
 road_dijkstra=Button(window,text='Tìm',width=7,command=UCS_AI)
 road_dijkstra.place(x=290,y=428)
 
-label3_dijkstra=Label(window,text='Đường')
-label3_dijkstra.place(x=100,y=460)
-lsb_dijkstra=Listbox(window,height=1)
-lsb_dijkstra.place(x=140,y=460)
-length_dijkstra=Label(window,text='Dài')
-length_dijkstra.place(x=265,y=460)
-length1_dijkstra=Listbox(window,height=1,width=10)
-length1_dijkstra.place(x=290,y=460)
+label3_ucs=Label(window,text='Đường')
+label3_ucs.place(x=100,y=460)
+lsb_ucs=Listbox(window,height=1)
+lsb_ucs.place(x=140,y=460)
+length_ucs=Label(window,text='Dài')
+length_ucs.place(x=265,y=460)
+length1_ucs=Listbox(window,height=1,width=10)
+length1_ucs.place(x=290,y=460)
 
 btn_request = Button(master = window,  
                     command=request,                

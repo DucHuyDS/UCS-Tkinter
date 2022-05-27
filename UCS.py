@@ -41,6 +41,6 @@ def UCS_code(graph, src, dest):
     
     if dest in minDistances and minDistances[dest] != float("inf"):
         # print('Shortest distance is ' + str(minDistances[dest]))
-        return '-'.join(path),str(minDistances[dest])+'km'
+        return '-'.join(path),str(minDistances[dest])+' km'
 
 
