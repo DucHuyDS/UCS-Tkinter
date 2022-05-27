@@ -1,4 +1,3 @@
-from csv import excel
 from tkinter import *
 from tkinter import ttk
 from tkinter.messagebox import showinfo
@@ -97,8 +96,8 @@ def request():
     label1_input.delete(0,END)
     label2_input.delete(0,END)
     label3_input.delete(0,END)
-    label1_dijkstra_input.delete(0,END)
-    label2_dijkstra_input.delete(0,END)
+    label1_ucs_input.delete(0,END)
+    label2_ucs_input.delete(0,END)
     Combo['values'] =''
     Combo.set('')
     lsb_nodes.delete(0,END)
@@ -257,20 +256,20 @@ bt_delete.bind('<Button-1>',delete)
 #----------------------------------------------------------------------------
 input1_dj=StringVar()
 input2_dj=StringVar()
-label_dijkstra=Label(window,text='Tìm Đường đi ngắn nhất')
-label_dijkstra.place(x=170,y=400)
-label1_dijkstra=Label(window,text='Từ')
-label1_dijkstra.place(x=100,y=430)
-label1_dijkstra_input=Entry(window,textvariable=input1_dj,width=10)
-label1_dijkstra_input.place(x=120,y=430)
+label_ucs=Label(window,text='Tìm Đường đi ngắn nhất')
+label_ucs.place(x=170,y=400)
+label1_ucs=Label(window,text='Từ')
+label1_ucs.place(x=100,y=430)
+label1_ucs_input=Entry(window,textvariable=input1_dj,width=10)
+label1_ucs_input.place(x=120,y=430)
 #------------------Dijkstra----------------------------------
-label2_dijkstra=Label(window,text='Đến')
-label2_dijkstra.place(x=190,y=430)
-label2_dijkstra_input=Entry(window,textvariable=input2_dj,width=10)
-label2_dijkstra_input.place(x=220,y=430)
+label2_ucs=Label(window,text='Đến')
+label2_ucs.place(x=190,y=430)
+label2_ucs_input=Entry(window,textvariable=input2_dj,width=10)
+label2_ucs_input.place(x=220,y=430)
 
-road_dijkstra=Button(window,text='Tìm',width=7,command=UCS_AI)
-road_dijkstra.place(x=290,y=428)
+road_ucs=Button(window,text='Tìm',width=7,command=UCS_AI)
+road_ucs.place(x=290,y=428)
 
 label3_ucs=Label(window,text='Đường')
 label3_ucs.place(x=100,y=460)
