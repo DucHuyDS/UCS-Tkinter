@@ -90,7 +90,7 @@ def request():
     label1_ucs_input.delete(0,END)
     label2_ucs_input.delete(0,END)
     Combo['values'] =''
-    Combo.set('')
+    Combo.set('Điểm')
     lsb_nodes.delete(0,END)
     fixed_positions.clear()
     plt.show(block=False)
