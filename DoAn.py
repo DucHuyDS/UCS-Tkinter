@@ -1,10 +1,11 @@
+from csv import excel
 from tkinter import *
 from tkinter import ttk
 from tkinter.messagebox import showinfo
 from UCS import generateDirectedGraph,UCS_code
 import networkx as nx
 import matplotlib.pyplot as plt
-from sample import node_position,edges
+from data import node_position,edges
 
 
 def start():
@@ -17,8 +18,7 @@ def start():
     label1_input.delete(0,END)
     label2_input.delete(0,END)
     label3_input.delete(0,END)
-    pos = nx.spring_layout(G ,seed=7)
-    draw_edge(pos)
+    draw_edge(check_edge())
 
 
 def delete(event):
@@ -41,11 +41,10 @@ def delete(event):
         G.add_edge(edge[0],edge[1],km=edge[2])
     for j in G_nodes:
         fixed_positions[j]=list(pos[j])#dict 'nut' : vitri
-    fixed_nodes = fixed_positions.keys()
-    pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
-    draw_edge(pos)
+    draw_edge(check_edge())
     lsb_dijkstra.delete(0)
     length1_dijkstra.delete(0)
+
 
 def UCS_AI():
     plt.clf()
@@ -72,9 +71,14 @@ def UCS_AI():
                     list_dj.append([s1[i+1],s1[i]])
                 except:
                     pass
+            list_elarge=[]
             for i in list_dj:
                 elarge = [(u, v) for (u, v, d) in G.edges(data=True) if u==i[0] and v==i[1]]
-                draw_edge(check_edge(),elarge)
+                try:
+                    list_elarge.append(elarge[0])
+                except:
+                    pass
+            draw_edge(check_edge(),list_elarge)
             
     else:
         showinfo('Lỗi','Không tìm thấy đường đi!')
@@ -100,42 +104,6 @@ def request():
     lsb_nodes.delete(0,END)
     plt.show(block=False)
 
-def draw_edge(pos,elarge=None):
-    lsb_nodes.delete(0,END)
-    if elarge==None:
-        plt.clf()
-    nx.draw_networkx_nodes(G, pos, node_size=700)
-    nx.draw_networkx_edges(G, pos,width=1)
-    if elarge:
-        nx.draw_networkx_edges(
-        G, pos, edgelist=elarge, width=4, edge_color="r"
-        )
-    edge_labs = dict([( (u,v), d['km']) for u,v,d in G.edges(data=True)])
-    nx.draw(G, pos)
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labs)
-    nx.draw_networkx_labels(G, pos, font_size=20, font_family="sans-serif")
-    G_nodes=G.nodes
-    Combo['values'] = [m for m in G_nodes] #cac gia tri trong combobox
-    for j in G_nodes:
-        lsb_nodes.insert(END,j)
-    plt.show(block=False)
-
-def check_edge():
-    if not fixed_positions:
-        pos = nx.spring_layout(G ,seed=7)
-    else:
-        fixed_nodes = fixed_positions.keys()
-        pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
-    return pos 
-
-def get_combo(event):
-    global get_node,get_score
-    get_node=''
-    get_score=''
-    get_node=selected_node.get()
-    get_score=selected_score.get()
-
-
 
 def change_position_node(item):
     pos=check_edge()
@@ -154,11 +122,18 @@ def change_position_node(item):
         fixed_positions[get_node][1]=fixed_positions[get_node][1]+float(get_score) 
     elif item =='-y':
         fixed_positions[get_node][1]=fixed_positions[get_node][1]-float(get_score) 
-    pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
-    draw_edge(pos)
+    draw_edge(check_edge())
 
 
-def sample():
+def get_combo(event):
+    global get_node,get_score
+    get_node=''
+    get_score=''
+    get_node=selected_node.get()
+    get_score=selected_score.get()
+
+
+def data():
     for edge in edges:
         input1.set(edge[0])
         input2.set(edge[1])
@@ -166,10 +141,38 @@ def sample():
         start()
     for j in node_position:
         fixed_positions[j]=list(node_position[j])#dict 'nut' : vitri
-    fixed_nodes = fixed_positions.keys()
-    pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
-    draw_edge(pos)
+    draw_edge(check_edge())
 
+
+def draw_edge(pos,list_elarge=None):
+    lsb_nodes.delete(0,END)
+    if list_elarge==None:
+        plt.clf()
+    nx.draw_networkx_nodes(G, pos, node_size=700)
+    nx.draw_networkx_edges(G, pos,width=1)
+    if list_elarge:
+        nx.draw_networkx_edges(
+        G, pos, edgelist=list_elarge, width=4, edge_color="r"
+        )
+    edge_labs = dict([( (u,v), d['km']) for u,v,d in G.edges(data=True)])
+    nx.draw(G, pos)
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labs)
+    nx.draw_networkx_labels(G, pos, font_size=20, font_family="sans-serif")
+    G_nodes=G.nodes
+    Combo['values'] = [m for m in G_nodes] #cac gia tri trong combobox
+    for j in G_nodes:
+        lsb_nodes.insert(END,j)
+    plt.show(block=False)
+
+
+def check_edge():
+    if not fixed_positions:
+        pos = nx.spring_layout(G ,seed=7)
+    else:
+        fixed_nodes = fixed_positions.keys()
+        pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
+    return pos 
+    
 
 #---------------------------------Tkinter------------------------------------------------------------------------
 window = Tk()
@@ -285,11 +288,11 @@ btn_request = Button(master = window,
                      text = "Làm mới")
 btn_request.place(x=200,y=480)
 
-sample_request = Button(master = window,  
-                    command=sample,                
+data_request = Button(master = window,  
+                    command=data,                
                      height = 2, 
                      width = 10,
-                     text = "ví dụ")
-sample_request.place(x=200,y=540)
+                     text = "data có sẵn")
+data_request.place(x=200,y=540)
 
 window.mainloop()
