@@ -8,11 +8,9 @@ from data import node_position,edges
 
 
 def start():
-    global i
     weighted_edges.append([input1.get(),input2.get(),float(input3.get())])
     G.add_edge(input1.get(),input2.get(),km=float(input3.get()))
-    lsb.insert(END,weighted_edges[i][0]+' đến '+weighted_edges[i][1]+' : '+ str(weighted_edges[i][2])+' km')
-    i+=1
+    lsb.insert(END,input1.get()+' đến '+input2.get()+' : '+ str(float(input3.get()))+' km')
     label1_input.delete(0,END)
     label2_input.delete(0,END)
     label3_input.delete(0,END)
@@ -20,7 +18,6 @@ def start():
 
 
 def delete(event):
-    global i
     #lay vi tri cac diem
     pos=check_edge()
     possition_list=lsb.curselection()
@@ -30,7 +27,6 @@ def delete(event):
     for edges in weighted_edges:
         if edges[0]==list_position[0] and edges[1]==list_position[1] and edges[2]==list_position[2] or edges[0]==list_position[1] and edges[1]==list_position[0] and edges[2]==list_position[2]: 
              weighted_edges.remove(edges)
-    i-=1
     G_nodes=G.nodes#lay cac nut
     G.clear()
     for edge in weighted_edges:
@@ -82,11 +78,9 @@ def UCS_AI():
 
 
 def request():
-    global i
     plt.clf()
     G.clear()
     weighted_edges.clear()
-    i=0
     lsb_ucs.delete(0)
     length1_ucs.delete(0)
     lsb.delete(0,END)
@@ -98,6 +92,7 @@ def request():
     Combo['values'] =''
     Combo.set('')
     lsb_nodes.delete(0,END)
+    fixed_positions.clear()
     plt.show(block=False)
 
 
@@ -175,10 +170,8 @@ window.title('Tìm đường đi ngắn nhất')
 window.geometry("500x600+900+100")
 plt.rcParams["figure.figsize"] = (8,6)
 #---------------------
-i=0                  #
 weighted_edges=[]    #
 fixed_positions={}   #
-list_node=[]         #
 get_node=''          #
 get_score=''         #
 #---------------------
