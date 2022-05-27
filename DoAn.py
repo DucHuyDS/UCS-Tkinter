@@ -9,7 +9,6 @@ from data import node_position,edges
 
 def start():
     global i
-    fixed_positions.clear()
     weighted_edges.append([input1.get(),input2.get(),float(input3.get())])
     G.add_edge(input1.get(),input2.get(),km=float(input3.get()))
     lsb.insert(END,weighted_edges[i][0]+' đến '+weighted_edges[i][1]+' : '+ str(weighted_edges[i][2])+' km')
@@ -23,7 +22,6 @@ def start():
 def delete(event):
     global i
     #lay vi tri cac diem
-    # fixed_positions.clear()
     pos=check_edge()
     possition_list=lsb.curselection()
     lsb.delete(int(possition_list[0]))
@@ -33,7 +31,6 @@ def delete(event):
         if edges[0]==list_position[0] and edges[1]==list_position[1] and edges[2]==list_position[2] or edges[0]==list_position[1] and edges[1]==list_position[0] and edges[2]==list_position[2]: 
              weighted_edges.remove(edges)
     i-=1
-
     G_nodes=G.nodes#lay cac nut
     G.clear()
     for edge in weighted_edges:
@@ -112,7 +109,6 @@ def change_position_node(item):
         G.add_edge(edge[0],edge[1],km=edge[2])
     for j in G_nodes:
         fixed_positions[j]=list(pos[j])#dict 'nut' : vitri
-    fixed_nodes = fixed_positions.keys()
     if item == '+x':
         fixed_positions[get_node][0]=fixed_positions[get_node][0]+float(get_score) 
     elif item =='-x':
@@ -241,6 +237,7 @@ Combo_score['state'] = 'readonly'
 Combo_score.set('Chọn')
 Combo_score.place(x=50,y=270)
 Combo_score.bind('<<ComboboxSelected>>', get_combo)
+
 bt_increse_x=Button(window,text='>',height=1,command= lambda: change_position_node('+x'))
 bt_increse_x.place(x=85,y=265)
 bt_decrease_x=Button(window,text='<',height=1,command= lambda: change_position_node('-x'))
@@ -253,16 +250,17 @@ bt_decrease_y.place(x=50,y=295)
 bt_delete=Button(window,text='Xóa')
 bt_delete.place(x=220,y=370)
 bt_delete.bind('<Button-1>',delete)
-#----------------------------------------------------------------------------
+#------------------UCS----------------------------------
 input1_dj=StringVar()
 input2_dj=StringVar()
 label_ucs=Label(window,text='Tìm Đường đi ngắn nhất')
 label_ucs.place(x=170,y=400)
+
 label1_ucs=Label(window,text='Từ')
 label1_ucs.place(x=100,y=430)
 label1_ucs_input=Entry(window,textvariable=input1_dj,width=10)
 label1_ucs_input.place(x=120,y=430)
-#------------------Dijkstra----------------------------------
+
 label2_ucs=Label(window,text='Đến')
 label2_ucs.place(x=190,y=430)
 label2_ucs_input=Entry(window,textvariable=input2_dj,width=10)
@@ -279,7 +277,7 @@ length_ucs=Label(window,text='Dài')
 length_ucs.place(x=265,y=460)
 length1_ucs=Listbox(window,height=1,width=10)
 length1_ucs.place(x=290,y=460)
-
+#------------------end UCS----------------------------------
 btn_request = Button(master = window,  
                     command=request,                
                      height = 2, 
