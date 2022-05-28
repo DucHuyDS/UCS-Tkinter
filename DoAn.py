@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import ttk
-from tkinter.messagebox import showinfo
+from tkinter.messagebox import showerror, showinfo
 from UCS import generateDirectedGraph,UCS_code
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -54,29 +54,29 @@ def UCS_AI():
         ucs =UCS_code(directed_weighted_graph,input1_dj.get(), input2_dj.get())
         try:
             lsb_ucs.insert(0, ucs[0])
+            length1_ucs.insert(0,ucs[1])
+            s1=ucs[0].split('-')
+            list_dj=[]
+            if input1_dj.get()!=input2_dj.get():
+                for i in range(len(s1)):
+                    try:
+                        list_dj.append([s1[i],s1[i+1]])
+                        list_dj.append([s1[i+1],s1[i]])
+                    except:
+                        pass
+                list_elarge=[]
+                for i in list_dj:
+                    elarge = [(u, v) for (u, v, d) in G.edges(data=True) if u==i[0] and v==i[1]]
+                    try:
+                        list_elarge.append(elarge[0])
+                    except:
+                        pass
+                draw_edge(check_edge(),list_elarge)
         except:
-            showinfo('Lỗi', 'Không tìm thấy đường đi!')
-        length1_ucs.insert(0,ucs[1])
-        s1=ucs[0].split('-')
-        list_dj=[]
-        if input1_dj.get()!=input2_dj.get():
-            for i in range(len(s1)):
-                try:
-                    list_dj.append([s1[i],s1[i+1]])
-                    list_dj.append([s1[i+1],s1[i]])
-                except:
-                    pass
-            list_elarge=[]
-            for i in list_dj:
-                elarge = [(u, v) for (u, v, d) in G.edges(data=True) if u==i[0] and v==i[1]]
-                try:
-                    list_elarge.append(elarge[0])
-                except:
-                    pass
-            draw_edge(check_edge(),list_elarge)
+            showerror('Lỗi', 'Không tìm thấy đường đi!')
             
     else:
-        showinfo('Lỗi','Không tìm thấy đường đi!')
+        showerror('Lỗi','Không tìm thấy đường đi!')
         draw_edge(check_edge())
 
 
@@ -96,6 +96,7 @@ def request():
     Combo.set('Điểm')
     lsb_nodes.delete(0,END)
     fixed_positions.clear()
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
     plt.show(block=False)
 
 
@@ -149,6 +150,7 @@ def draw_edge(pos,list_elarge=None):
     Combo['values'] = [m for m in G_nodes] #cac gia tri trong combobox
     for j in G_nodes:
         lsb_nodes.insert(END,j)
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
     plt.show(block=False)
 
 
@@ -168,6 +170,7 @@ def save_file():
             keylist = data.keys()
         for i in keylist:
             list_file.insert(END,i)
+        file_input_text.delete(0,END)
         showinfo('Thông báo!','Lưu file thành công')
     else:
         pass
@@ -202,10 +205,7 @@ def delete_file(event):
     list_file.delete(0,END)
     for i in keylist:
         list_file.insert(END,i)
-    try:
-        showinfo('Thông báo!','Xóa file thành công')
-    except:
-        pass
+ 
 
 
 
