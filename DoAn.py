@@ -4,7 +4,7 @@ from tkinter.messagebox import showinfo
 from UCS import generateDirectedGraph,UCS_code
 import networkx as nx
 import matplotlib.pyplot as plt
-from data import node_position,edges
+import json
 
 
 def start():
@@ -52,7 +52,10 @@ def UCS_AI():
             Bool_ip2 = True
     if Bool_ip1 ==True and Bool_ip2 == True:
         ucs =UCS_code(directed_weighted_graph,input1_dj.get(), input2_dj.get())
-        lsb_ucs.insert(0,ucs[0])
+        try:
+            lsb_ucs.insert(0, ucs[0])
+        except:
+            showinfo('Lỗi', 'Không tìm thấy đường đi!')
         length1_ucs.insert(0,ucs[1])
         s1=ucs[0].split('-')
         list_dj=[]
@@ -117,22 +120,16 @@ def change_position_node(item):
 
 def get_combo(event):
     global get_node,get_score
-    get_node=''
-    get_score=''
     get_node=selected_node.get()
     get_score=selected_score.get()
 
-
-def data():
-    for edge in edges:
-        input1.set(edge[0])
-        input2.set(edge[1])
-        input3.set(edge[2])
-        start()
-    for j in node_position:
-        fixed_positions[j]=list(node_position[j])#dict 'nut' : vitri
-    draw_edge(check_edge())
-
+def check_edge():
+    if not fixed_positions:
+        pos = nx.spring_layout(G ,seed=7)
+    else:
+        fixed_nodes = fixed_positions.keys()
+        pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
+    return pos 
 
 def draw_edge(pos,list_elarge=None):
     lsb_nodes.delete(0,END)
@@ -155,13 +152,61 @@ def draw_edge(pos,list_elarge=None):
     plt.show(block=False)
 
 
-def check_edge():
-    if not fixed_positions:
-        pos = nx.spring_layout(G ,seed=7)
+def save_file():
+    if len(file_input.get())>=1:
+        list_file.delete(0,END)
+        data={}
+        with open('data.json') as file:
+            data=json.loads(file.read())
+            data[file_input.get()]=[]
+            data[file_input.get()].append({
+                'edges':weighted_edges,
+                'node_position':fixed_positions
+            })
+        with open('data.json', 'w') as file:
+            json.dump(data, file)
+            keylist = data.keys()
+        for i in keylist:
+            list_file.insert(END,i)
+        showinfo('Thông báo!','Lưu file thành công')
     else:
-        fixed_nodes = fixed_positions.keys()
-        pos = nx.spring_layout(G,pos=fixed_positions, fixed = fixed_nodes,seed=7)
-    return pos 
+        pass
+
+
+def get_file(event):
+    request()
+    select =list_file.curselection()
+    with open('data.json') as json_file:
+        data = json.load(json_file)
+        key=list_file.get(select[0])
+        node_position=data[list_file.get(select[0])][0]['node_position']
+        for edge in data[key]: 
+            for i in edge['edges']:
+                input1.set(i[0])
+                input2.set(i[1])
+                input3.set(i[2])
+                start()
+        for j in node_position:
+            fixed_positions[j]=list(node_position[j])#dict 'nut' : vitri
+        draw_edge(check_edge())
+
+
+def delete_file(event):
+    select =list_file.curselection()
+    with open('data.json') as json_file:
+        data = json.load(json_file)
+    data.pop(list_file.get(select[0]))
+    with open('data.json', 'w') as json_file:
+        json.dump(data, json_file)
+        keylist = data.keys()
+    list_file.delete(0,END)
+    for i in keylist:
+        list_file.insert(END,i)
+    try:
+        showinfo('Thông báo!','Xóa file thành công')
+    except:
+        pass
+
 
 
 #---------------------------------Tkinter------------------------------------------------------------------------
@@ -179,6 +224,7 @@ G=nx.Graph()
 input1=StringVar()
 input2=StringVar()
 input3=StringVar()
+
 label1=Label(window,text='Điểm bắt đầu')
 label1.place(x=200,y=10)
 label1_input=Entry(window,textvariable=input1)
@@ -195,6 +241,7 @@ label3_input=Entry(window,textvariable=input3)
 label3_input.place(x=180,y=110)
 label3_km=Label(window,text='km')
 label3_km.place(x=300,y=110)
+
 plot_button = Button(master = window, 
                      command = start,
                      height = 2, 
@@ -211,6 +258,35 @@ label_lsb_nodes=Label(window,text='Điểm')
 label_lsb_nodes.place(x=140,y=180)
 lsb_nodes=Listbox(window,width=5)
 lsb_nodes.place(x=140,y=200)
+
+file_input=StringVar()
+file_name=Label(window,text='Tên')
+file_name.place(x=340,y=180)
+file_input_text=Entry(window,textvariable=file_input,width = 10)
+file_input_text.place(x=370,y=180)
+file_save = Button(master = window, 
+                     command = save_file,
+                     height = 1, 
+                     width = 5,
+                     text = "Lưu file")
+file_save.place(x=440,y=175)
+list_file_json=Label(window,text='Danh sách file')
+list_file_json.place(x=360,y=210)
+list_file=Listbox(window,width=17,height = 8)
+list_file.place(x=350,y=230)
+with open('data.json') as file:
+    data=json.loads(file.read())
+    keylist = data.keys()
+    for i in keylist:
+        list_file.insert(END,i)
+delete_file_btn=Button(window,text='Xóa file')
+delete_file_btn.place(x=350,y=370)
+delete_file_btn.bind('<Button-1>',delete_file)
+
+
+launch_file=Button(window,text='xuất file')
+launch_file.place(x=410,y=370)
+launch_file.bind('<Button-1>',get_file)
 
 #=========change_position=======
 change_position=Label(window,text='Thay đổi vị trí')
@@ -246,43 +322,40 @@ bt_delete.bind('<Button-1>',delete)
 #------------------UCS----------------------------------
 input1_dj=StringVar()
 input2_dj=StringVar()
+
 label_ucs=Label(window,text='Tìm Đường đi ngắn nhất')
-label_ucs.place(x=170,y=400)
+label_ucs.place(x=170,y=430)
 
 label1_ucs=Label(window,text='Từ')
-label1_ucs.place(x=100,y=430)
+label1_ucs.place(x=100,y=460)
 label1_ucs_input=Entry(window,textvariable=input1_dj,width=10)
-label1_ucs_input.place(x=120,y=430)
+label1_ucs_input.place(x=120,y=460)
 
 label2_ucs=Label(window,text='Đến')
-label2_ucs.place(x=190,y=430)
+label2_ucs.place(x=190,y=460)
 label2_ucs_input=Entry(window,textvariable=input2_dj,width=10)
-label2_ucs_input.place(x=220,y=430)
+label2_ucs_input.place(x=220,y=460)
 
 road_ucs=Button(window,text='Tìm',width=7,command=UCS_AI)
-road_ucs.place(x=290,y=428)
+road_ucs.place(x=290,y=458)
 
 label3_ucs=Label(window,text='Đường')
-label3_ucs.place(x=100,y=460)
+label3_ucs.place(x=100,y=490)
+
 lsb_ucs=Listbox(window,height=1)
-lsb_ucs.place(x=140,y=460)
+lsb_ucs.place(x=140,y=490)
+
 length_ucs=Label(window,text='Dài')
-length_ucs.place(x=265,y=460)
+length_ucs.place(x=265,y=490)
 length1_ucs=Listbox(window,height=1,width=10)
-length1_ucs.place(x=290,y=460)
+length1_ucs.place(x=290,y=490)
 #------------------end UCS----------------------------------
 btn_request = Button(master = window,  
                     command=request,                
                      height = 2, 
                      width = 10,
                      text = "Làm mới")
-btn_request.place(x=200,y=480)
+btn_request.place(x=200,y=510)
 
-data_request = Button(master = window,  
-                    command=data,                
-                     height = 2, 
-                     width = 10,
-                     text = "data có sẵn")
-data_request.place(x=200,y=540)
 
 window.mainloop()
