@@ -267,10 +267,10 @@ file_input_text.place(x=370,y=180)
 file_save = Button(master = window, 
                      command = save_file,
                      height = 1, 
-                     width = 5,
-                     text = "Lưu file")
+                     width = 6,
+                     text = "Lưu data")
 file_save.place(x=440,y=175)
-list_file_json=Label(window,text='Danh sách file')
+list_file_json=Label(window,text='Danh sách data')
 list_file_json.place(x=360,y=210)
 list_file=Listbox(window,width=17,height = 8)
 list_file.place(x=350,y=230)
@@ -279,12 +279,12 @@ with open('data.json') as file:
     keylist = data.keys()
     for i in keylist:
         list_file.insert(END,i)
-delete_file_btn=Button(window,text='Xóa file')
+delete_file_btn=Button(window,text='Xóa data')
 delete_file_btn.place(x=350,y=370)
 delete_file_btn.bind('<Button-1>',delete_file)
 
 
-launch_file=Button(window,text='xuất file')
+launch_file=Button(window,text='xuất data')
 launch_file.place(x=410,y=370)
 launch_file.bind('<Button-1>',get_file)
 
